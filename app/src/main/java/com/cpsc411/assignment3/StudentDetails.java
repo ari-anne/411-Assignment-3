@@ -31,6 +31,7 @@ public class StudentDetails extends AppCompatActivity {
     ArrayList<LinearLayout> rows = new ArrayList<LinearLayout>();
     LinearLayout courseList;
     StudentDB mStudentDB;
+    boolean studentExists;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,10 +42,11 @@ public class StudentDetails extends AppCompatActivity {
         mButton = findViewById(R.id.add_course);
 
         int index = getIntent().getIntExtra("StudentIndex", -1);
-        boolean studentExists = index >= 0;
+        studentExists = index >= 0;
 
         if (studentExists) {
-            student = mStudentDB.getStudentObjects().get(index);
+            mStudentDB.getStudentObjects();
+            student = mStudentDB.getStudentList().get(index);
 
 //            fill in student info
             EditText editText = findViewById(R.id.first_name);
@@ -91,14 +93,15 @@ public class StudentDetails extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.detail_menu, menu);
+        if (!studentExists) {
+            getMenuInflater().inflate(R.menu.detail_menu, menu);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.save) {
-
 //            get text from input fields and create student object
             String firstName = ((EditText)(findViewById(R.id.first_name))).getText().toString();
             String lastName = ((EditText)(findViewById(R.id.last_name))).getText().toString();

@@ -22,12 +22,12 @@ public class SummaryListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mStudentDB.getStudentObjects().size();
+        return mStudentDB.getStudentList().size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mStudentDB.getStudentObjects().get(position);
+        return mStudentDB.getStudentList().get(position);
     }
 
     @Override

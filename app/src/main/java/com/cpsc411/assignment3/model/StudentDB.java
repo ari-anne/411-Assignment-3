@@ -16,11 +16,10 @@ public class StudentDB {
         File dbFile = context.getDatabasePath("student.db");
         mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase(dbFile, null);
 
-        mSQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Student (FirstName Text, LastName Text, CWID Integer)");
-        mSQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS CourseEnrollment (CourseID Text, Grade Text, CWID Integer)");
+        createSQLTables();
 
 //        reset database
-        makeStudents();
+//        makeStudents();
     }
 
     public ArrayList<Student> getStudentList() {
@@ -31,12 +30,20 @@ public class StudentDB {
         mStudentList = studentList;
     }
 
-//    reset database
-    protected void makeStudents() {
-        mSQLiteDatabase.delete("Student", null, null);
-        mSQLiteDatabase.delete("CourseEnrollment", null, null);
+    public void createSQLTables() {
         mSQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS Student (FirstName Text, LastName Text, CWID Integer)");
         mSQLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS CourseEnrollment (CourseID Text, Grade Text, CWID Integer)");
+    }
+
+    public void deleteSQLTables() {
+        mSQLiteDatabase.delete("Student", null, null);
+        mSQLiteDatabase.delete("CourseEnrollment", null, null);
+    }
+
+//    reset database
+    protected void makeStudents() {
+        deleteSQLTables();
+        createSQLTables();
 
         Student student = new Student("John", "Smith", 123456789);
         ArrayList<CourseEnrollment> courses = new ArrayList<CourseEnrollment>();
@@ -62,17 +69,18 @@ public class StudentDB {
     }
 
     public ArrayList<Student> getStudentObjects() {
-        mStudentList = new ArrayList<Student>();
+        ArrayList<Student> studentList = new ArrayList<Student>();
         Cursor c = mSQLiteDatabase.query("Student", null, null, null, null, null, null);
 
         if (c.getCount() > 0) {
             while (c.moveToNext()) {
                 Student student = new Student();
                 student.initFrom(mSQLiteDatabase, c);
-                mStudentList.add(student);
+                studentList.add(student);
             }
         }
 
-        return mStudentList;
+        mStudentList = studentList;
+        return studentList;
     }
 }
